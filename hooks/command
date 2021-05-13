@@ -1,0 +1,96 @@
+#!/usr/bin/env bash
+
+set -eou pipefail
+
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+
+# shellcheck source=lib/helpers.sh
+source "${ROOT}/lib/helpers.sh"
+
+function sonarscanner-bin() {
+  if [ -n "${VERSION}" ]; then
+    local DOCKER_IMAGE="${IMAGE_NAME}:${VERSION}"
+  else
+    local DOCKER_IMAGE="${IMAGE_NAME}"
+  fi
+
+  docker_args=()
+
+  docker_args+=(
+    "--rm"
+    "-it"
+    "-v" "${PWD}:/svc"
+    # Used to ensure cleanup can function
+    "-u" "$(id -u):$(id -g)"
+    "-v" "/etc/passwd:/etc/passwd:ro"
+    "-v" "/etc/group:/etc/group:ro"
+    "-v" "/etc/shadow:/etc/shadow:ro"
+    "-v" "${ROOT}/.sonar/:/opt/sonar-scanner/.sonar/"
+    "-v" "$(pwd):/usr/src"
+    # shellcheck disable=SC2155
+    "-e" "SONAR_HOST_URL=${SONARSCANNER_HOST}"
+    # shellcheck disable=SC2155
+    "-e" "SONAR_LOGIN=${SONARSCANNER_LOGIN}"
+  )
+
+  docker_args+=(
+    "${DOCKER_IMAGE}"
+    "${@}"
+  )
+
+  if [[ "${DEBUG}" == true ]]; then
+    echo "--- :sonarqube: :buildkite: :hammer_and_wrench: Debug on - show Docker command string."
+    echo "docker run ${docker_args[*]/${SONARSCANNER_LOGIN}/**********}"
+  fi
+
+  docker run "${docker_args[@]}"
+}
+
+
+function sonarscanner-run() {
+  local IMAGE_NAME
+  local DEBUG
+  local VERSION
+
+  IMAGE_NAME="$(plugin_read_config IMAGE 'sonarsource/sonar-scanner-cli')"
+  DEBUG="$(plugin_read_config DEBUG 'false')"
+  VERSION="$(plugin_read_config VERSION '')"
+
+  echo "Creating cache directory for sonar-scanner"
+  mkdir -p "${ROOT}/.sonar/cache"
+
+  sonarscanner_args=()
+  sonarscanner_args+=(
+    "-Dsonar.projectKey=$(plugin_read_config PROJECT_KEY)"
+  )
+  while read -r line; do
+    [[ -n "${line}" ]] && sonarscanner_args+=("${line}")
+  done <<< "$(plugin_read_list ADDITIONAL_FLAGS)"
+
+  if [[ $BUILDKITE_PULL_REQUEST != "false" ]]; then
+    echo "PR Detected, running a PR Scan"
+    sonarscanner_args+=("-Dsonar.pullrequest.key=${BUILDKITE_PULL_REQUEST}")
+    sonarscanner_args+=("-Dsonar.pullrequest.branch=${BUILDKITE_BRANCH}")
+    sonarscanner_args+=("-Dsonar.pullrequest.base=${BUILDKITE_PULL_REQUEST_BASE_BRANCH}")
+  elif [[ ${BUILDKITE_BRANCH} == "${BUILDKITE_PIPELINE_DEFAULT_BRANCH}" ]]; then
+    echo "Current build is for $BUILDKITE_PIPELINE_DEFAULT_BRANCH which is the 'default' branch, doing 'default' branch scan."
+  else
+    echo "Current build is a feature branch build, doing branch scan"
+    sonarscanner_args+=("-Dsonar.branch.name=${BUILDKITE_BRANCH}")
+    sonarscanner_args+=("-Dsonar.branch.target=${BUILDKITE_PIPELINE_DEFAULT_BRANCH}")
+  fi
+
+
+  while read -r artifact; do
+    [[ -n "${artifact}" ]] || continue
+
+    echo "Downloading artifact: ${artifact}"
+    buildkite-agent artifact download "${artifact}" .
+
+  done <<< "$(plugin_read_list ARTIFACTS)"
+
+  echo "+++ :sonarqube: Running sonar-scanner"
+  sonarscanner-bin "${sonarscanner_args[@]}"
+}
+
+sonarscanner-run

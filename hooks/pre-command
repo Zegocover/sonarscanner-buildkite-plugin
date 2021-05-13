@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+set -eou pipefail
+
+# unshallow the mirror for sonarscanner as it doesn't like shallow clones
+echo "Checking out git repo, to remove git-mirrors as sonarscanner doens't like it"
+
+SUFFIX="/objects"
+REF_PATH=$(cat .git/objects/info/alternates)
+TEMP_DIR="unshallow_clone"
+
+# Copy the reference and don't allow symlinks
+# Shallow clones by buildkite prevent getting the required branches and REFS
+# shellcheck disable=SC2086,SC2046
+git clone --reference ${REF_PATH%"${SUFFIX}"} --dissociate $(git remote get-url origin) ${TEMP_DIR}
+pushd ${TEMP_DIR}
+
+git fetch origin "${BUILDKITE_PIPELINE_DEFAULT_BRANCH}"
+
+echo "Checking out ${BUILDKITE_COMMIT}"
+# shellcheck disable=SC2086
+git checkout ${BUILDKITE_COMMIT}

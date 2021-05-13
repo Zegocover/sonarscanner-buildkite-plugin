@@ -1,0 +1,18 @@
+# Config for https://github.com/apps/release-drafter
+name-template: 'v$NEXT_MINOR_VERSION (🌈 Insert Release Name)'
+tag-template: 'v$NEXT_MINOR_VERSION'
+categories:
+  - title: 'Dependency Updates'
+    label: 'dependencies'
+template: |
+  ## Changes
+  $CHANGES
+  ## Upgrading
+  To upgrade, update your `pipeline.yml` files:
+  ```diff
+  steps:
+    - plugins:
+  -     jack1902/sonarscanner#$PREVIOUS_TAG:
+  +     jack1902/sonarscanner#v$NEXT_MINOR_VERSION:
+          project_key: "PLACEHOLDER"
+  ```

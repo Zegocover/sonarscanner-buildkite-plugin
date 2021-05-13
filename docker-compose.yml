@@ -1,0 +1,10 @@
+---
+version: "3"
+services:
+  buildkite_plugin_linter:
+    image: buildkite/plugin-linter
+    command: [
+        --id, jack1902/sonarscanner
+    ]
+    volumes:
+      - .:/plugin
