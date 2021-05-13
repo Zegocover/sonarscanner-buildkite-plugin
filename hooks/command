@@ -25,6 +25,7 @@ function sonarscanner-bin() {
     "-v" "/etc/passwd:/etc/passwd:ro"
     "-v" "/etc/group:/etc/group:ro"
     "-v" "/etc/shadow:/etc/shadow:ro"
+    "-v" "${ROOT}/.sonar/:/opt/sonar-scanner/.sonar/"
     "-v" "$(pwd):/usr/src"
     # shellcheck disable=SC2155
     "-e" "SONAR_HOST_URL=${SONARSCANNER_HOST}"
@@ -54,6 +55,9 @@ function sonarscanner-run() {
   IMAGE_NAME="$(plugin_read_config IMAGE 'sonarsource/sonar-scanner-cli')"
   DEBUG="$(plugin_read_config DEBUG 'false')"
   VERSION="$(plugin_read_config VERSION '')"
+
+  echo "Creating cache directory for sonar-scanner"
+  mkdir -p "${ROOT}/.sonar/cache"
 
   sonarscanner_args=()
   sonarscanner_args+=(
