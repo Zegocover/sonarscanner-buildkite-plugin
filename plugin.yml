@@ -1,0 +1,16 @@
+name: sonarscanner
+description: Run the sonar-scanner from SonarQube, pulling secrets from AWS Parameter store if not present in ENV-Vars
+author: https://github.com/jack1902/
+requirements:
+  - docker
+configuration:
+  properties:
+    project_key:
+      type: string
+    additional_flags:
+      type: [string, array]
+    artifacts:
+      type: [string, array]
+  required:
+    - project_key
+  additionalProperties: false
