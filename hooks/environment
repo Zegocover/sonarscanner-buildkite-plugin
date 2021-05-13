@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+set -eou pipefail
+
+echo "Setting up sonarscanner environment"
+
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+
+# shellcheck source=lib/helpers.sh
+source "${ROOT}/lib/helpers.sh"
+
+# Use the env-vars if they already exist, otherwise look them up in AWS SSM Parameter Store
+export SONARSCANNER_HOST="${SONARSCANNER_HOST:-$(ssm_parameter /buildkite/SONARSCANNER_HOST)}"
+export SONARSCANNER_LOGIN="${SONARSCANNER_LOGIN:-$(ssm_parameter /buildkite/SONARSCANNER_LOGIN)}"
+
+echo "Environment setup"
