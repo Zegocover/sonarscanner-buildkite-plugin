@@ -26,7 +26,7 @@ The below example can be used to run the sonarscanner plugin whenever your pipel
 steps:
   - label: ":sonarqube: Running sonarscanner"
     plugins:
-      - jack1902/sonarscanner#v0.0.1:
+      - jack1902/sonarscanner#v1.0.0:
           project_key: "PLACEHOLDER"
     agents:
       queue: default
@@ -38,7 +38,7 @@ steps:
 steps:
   - label: ":sonarqube: Running sonarscanner"
     plugins:
-      - jack1902/sonarscanner#v0.0.1:
+      - jack1902/sonarscanner#v1.0.0:
           project_key: "PLACEHOLDER"
           additional_flags:
             - "-Dsonar.coverage.jacoco.xmlReportPaths=coverage.xml"
