@@ -11,6 +11,8 @@ configuration:
       type: [string, array]
     artifacts:
       type: [string, array]
+    debug:
+      type: boolean
   required:
     - project_key
   additionalProperties: false
