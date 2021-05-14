@@ -49,11 +49,11 @@ steps:
 
 ## Configuration
 
-| Option           | Required |      Type      |                                                    Default                                                    | Description                                                                                                                                                                   |
-| ---------------- | :------: | :------------: | :-----------------------------------------------------------------------------------------------------------: | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| project_key      |   Yes    |    `string`    |                                                                                                               | The project key used inside of sonarqube                                                                                                                                      |
-| additional_flags |    No    | `list(string)` |                                                                                                               | Additional flags to pass directly to the sonarscan, see the documentation for an extensive list [sonarscanner](https://docs.sonarqube.org/latest/analysis/scan/sonarscanner/) |
-| debug            |    No    |    `string`    | Run the plugin in debug mode, useful for validating given flags that are being passed to the docker container |                                                                                                                                                                               |
+| Option           | Required |      Type      | Default | Description                                                                                                                                                                   |
+| ---------------- | :------: | :------------: | :-----: | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| project_key      |   Yes    |    `string`    |         | The project key used inside of sonarqube                                                                                                                                      |
+| additional_flags |    No    | `list(string)` |         | Additional flags to pass directly to the sonarscan, see the documentation for an extensive list [sonarscanner](https://docs.sonarqube.org/latest/analysis/scan/sonarscanner/) |
+| debug            |    No    |    `string`    |         | Run the plugin in debug mode, useful for validating given flags that are being passed to the docker container                                                                 |
 
 ## Contributing
 
