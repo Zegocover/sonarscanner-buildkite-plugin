@@ -53,7 +53,8 @@ steps:
 | ---------------- | :------: | :------------: | :-----: | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | project_key      |   Yes    |    `string`    |         | The project key used inside of sonarqube                                                                                                                                      |
 | additional_flags |    No    | `list(string)` |         | Additional flags to pass directly to the sonarscan, see the documentation for an extensive list [sonarscanner](https://docs.sonarqube.org/latest/analysis/scan/sonarscanner/) |
-| debug            |    No    |    `string`    |         | Run the plugin in debug mode, useful for validating given flags that are being passed to the docker container                                                                 |
+| debug            |    No    |    `boolean`    |         | Run the plugin in debug mode, useful for validating given flags that are being passed to the docker container                                                                 |
+| artifacts        |    No    | `list(string)` |         | use `buildkite-agent artifact download` for each of the given paths. Helpful when wanting test-coverage output within SonarQube                                               |
 
 ## Contributing
 
