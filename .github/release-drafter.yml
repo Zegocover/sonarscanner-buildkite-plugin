@@ -4,6 +4,31 @@ tag-template: 'v$NEXT_MINOR_VERSION'
 categories:
   - title: 'Dependency Updates'
     label: 'dependencies'
+  - title: '🚀 Features'
+    label: 'feature'
+  - title: '🐛 Bug Fixes'
+    labels:
+      - 'fix'
+      - 'bugfix'
+      - 'bug'
+exclude-labels:
+  - 'skip-changelog'
+autolabeler:
+  - label: 'documentation'
+    files:
+      - '*.md'
+    branch:
+      - '/docs{0,1}\/.+/'
+  - label: 'bug'
+    branch:
+      - '/fix\/.+/'
+    title:
+      - '/fix/i'
+  - label: 'enhancement'
+    branch:
+      - '/feature\/.+/'
+    body:
+      - '/feature{0,1}\/.+/'
 template: |
   ## Changes
   $CHANGES
