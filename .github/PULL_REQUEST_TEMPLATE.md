@@ -17,4 +17,4 @@ resolves:
 ## Testing
 <!-- Steps for how this change was tested and verified -->
 
-- [ ] - Ran `docker-compose --rm buildkite_plugin_linter` locally
+- [ ] - Ran `docker-compose run --rm buildkite_plugin_linter` locally
